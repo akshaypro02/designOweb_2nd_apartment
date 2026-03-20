@@ -6,8 +6,49 @@
     <title>Unity WebGL Player | apartment_02</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
-    <script src="reactBridge.js"></script>
   </head>
+
+<!-- DEBUG LOG PANEL -->
+<div id="log" style="
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+max-height:40%;
+overflow:auto;
+background:black;
+color:#00ff00;
+font-size:12px;
+z-index:9999;
+"></div>
+
+<script>
+function log(msg) {
+  const el = document.getElementById("log");
+  if (el) el.innerHTML += msg + "<br>";
+}
+
+// JS Errors
+window.onerror = function(msg, url, line, col, error) {
+  log("JS ERROR: " + msg + " @ line " + line);
+};
+
+// Promise Errors
+window.onunhandledrejection = function(e) {
+  log("PROMISE ERROR: " + e.reason);
+};
+
+// Console logs
+(function () {
+  const oldLog = console.log;
+  console.log = function (...args) {
+    log(args.join(" "));
+    oldLog.apply(console, args);
+  };
+})();
+</script>
+
+  
   <body>
     <div id="unity-container" class="unity-desktop">
       <canvas id="unity-canvas" width=960 height=600 tabindex="-1"></canvas>
@@ -60,9 +101,9 @@
       var buildUrl = "Build";
       var loaderUrl = buildUrl + "/designOWEB 2.loader.js";
       var config = {
-        dataUrl: buildUrl + "/designOWEB 2.data.unityweb",
-        frameworkUrl: buildUrl + "/designOWEB 2.framework.js.unityweb",
-        codeUrl: buildUrl + "/designOWEB 2.wasm.unityweb",
+        dataUrl: buildUrl + "/designOWEB 2.data",
+        frameworkUrl: buildUrl + "/designOWEB 2.framework.js",
+        codeUrl: buildUrl + "/designOWEB 2.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "apartment_02",
@@ -120,7 +161,6 @@
                 fullscreenButton.onclick = () => {
                   unityInstance.SetFullscreen(1);
                 };
-                  setupReactBridge(unityInstance); // 👈 connect React bridge
               }).catch((message) => {
                 alert(message);
               });
